@@ -22,19 +22,38 @@ function applynoise!(r::Register, n, indices::Base.AbstractVecOrTuple)
     return r
 end
 
-"""Depolarization noise model with total probability of error `p`."""
+
+# TODO: implement dephasing, pauli noise (which a special case is depolarizing channel), amplitude damping, photon loss
+
+# TODO: also need multiqubit error
+
+
+"""Noise model with non-uniform probabilities of error `ps`."""
+struct UncorrelatedNoise{T} <: AbstractNoise
+    ps::Vector{T}
+end
+
+"""Noise model with uniform probability summing to error `p`."""
 struct UnbiasedUncorrelatedNoise{T} <: AbstractNoise
     p::T
 end
+
 UnbiasedUncorrelatedNoise(p::Integer) = UnbiasedUncorrelatedNoise(float(p))
+
+function DephasingNoise end
+
+function DephasingNoise(p) 
+    UnbiasedUncorrelatedNoise(p)
+end
+
 
 """A convenient constructor for various types of Pauli noise models.
 Returns more specific types when necessary."""
 function PauliNoise end
 
 """Constructs an unbiased Pauli noise model with total probability of error `p`."""
-function PauliNoise(p)
-    UnbiasedUncorrelatedNoise(p)
+function PauliNoise(ps)
+    UncorrelatedNoise(ps)
 end
 
 function applynoise!(s::AbstractStabilizer,noise::UnbiasedUncorrelatedNoise,i::Int)
