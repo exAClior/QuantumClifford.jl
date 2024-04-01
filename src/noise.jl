@@ -27,23 +27,16 @@ end
 
 # TODO: also need multiqubit error
 
-
-"""Noise model with non-uniform probabilities of error `ps`."""
-struct UncorrelatedNoise{T} <: AbstractNoise
+"""Noise model with Markovian errors with probabilities `ps`."""
+struct MarkovianNoise{T} <: AbstractNoise
+    # noise probabilities for  
     ps::Vector{T}
 end
-
-"""Noise model with uniform probability summing to error `p`."""
-struct UnbiasedUncorrelatedNoise{T} <: AbstractNoise
-    p::T
-end
-
-UnbiasedUncorrelatedNoise(p::Integer) = UnbiasedUncorrelatedNoise(float(p))
 
 function DephasingNoise end
 
 function DephasingNoise(p) 
-    UnbiasedUncorrelatedNoise(p)
+    MarkovianNoise([p])
 end
 
 
